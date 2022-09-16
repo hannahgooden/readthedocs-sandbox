@@ -1,9 +1,4 @@
-Template for the Read the Docs tutorial
+Ezmsg Read the Docs
 =======================================
 
-This GitHub template includes fictional Python library
-with some basic Sphinx docs.
-
-Read the tutorial here:
-
-https://docs.readthedocs.io/en/stable/tutorial/
+To set up a Visual Studio Code dev environment, `pip install esbonio docutils sphinx-rtd-theme`. Then download the reStructuredText and reStructuredText Syntax Highlighting extensions.

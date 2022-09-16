@@ -2,12 +2,12 @@
 
 # -- Project information
 
-project = 'Lumache'
-copyright = '2021, Graziella'
-author = 'Graziella'
+project = 'ezmsg'
+copyright = '2022, JHU/APL'
+author = 'JHU/APL'
 
-release = '0.1'
-version = '0.1.0'
+release = '3.0'
+version = '3.0.0'
 
 # -- General configuration
 
