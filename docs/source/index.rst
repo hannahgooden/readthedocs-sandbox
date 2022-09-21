@@ -21,4 +21,3 @@ Contents
 
    getting-started
    api
-   lifecycle-hooks
