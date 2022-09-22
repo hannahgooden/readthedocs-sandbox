@@ -3,7 +3,7 @@ Getting Started
 
 System Requirements
 -------------------
-Due to reliance on multiprocessing.shared_memory, ezmsg requires minimum Python 3.8. Beyond that, ezmsg is a pure Python library with no external dependencies.
+Due to reliance on ``multiprocessing.shared_memory``, ``ezmsg`` requires minimum Python 3.8. Beyond that, ezmsg is a pure Python library with no external dependencies.
 
 Testing ezmsg requires:
 
@@ -17,7 +17,7 @@ Installation
 
 Clone the project, then create a virtual environment and install it there.
 
-.. code-block:: python
+.. code-block:: powershell
 
   # Windows
   python3 -m venv env
@@ -28,7 +28,7 @@ Clone the project, then create a virtual environment and install it there.
 
   (env) python -m pytest -v tests # Optionally, Perform tests
 
-.. code-block:: python
+.. code-block:: bash
 
   # Unix-based
   python3 -m venv env

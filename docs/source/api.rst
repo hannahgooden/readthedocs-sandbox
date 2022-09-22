@@ -1,8 +1,6 @@
 API
 ===
 
-``ezmsg`` allows you to build modular systems whose elements can be switched out easily. Consider the use case of building a processing pipeline where you will be experimenting with adding and removing steps until you find an optimal workflow. ``ezmsg`` allows you to easily separate each step into a discrete entity and piece together a workflow from those entities. Check out the `Examples <https://github.com/iscoe/ezmsg/tree/master/examples>`_ to see how this works!
-
 An ``ezmsg`` system is created from a few basic components. ``ezmsg`` provides a framework for you to define your own graphs using its building blocks. Inherit from its base components to define a pipeline that works for your project.
 
 .. TODO: add figure showing how components work together
@@ -51,6 +49,8 @@ Network Definition
 
    Wrapper on ``Iterator[Tuple[OutputStream, InputStream]]``.
 
+.. _run-system:
+
 run_system
 ----------
 
@@ -61,7 +61,7 @@ run_system
 Settings
 --------
 
-To pass parameters into a ``Unit``, ``Collection``, or ``System``, inherit from ``Settings``.
+To pass parameters into a ``Unit``, ``Collection``, or ``System``, inherit from ``Settings``. ``Settings`` uses `Python dataclasses <https://docs.python.org/3/library/dataclasses.html>`_ under the hood, so it can be treated in a similar way.
 
 .. code-block:: python
 
@@ -69,19 +69,49 @@ To pass parameters into a ``Unit``, ``Collection``, or ``System``, inherit from 
       setting1: int
       setting2: float
 
+To use, add the ``Settings`` object to a ``Unit``.
+
+.. code-block:: python
+
+   class YourUnit(Unit):
+
+      SETTINGS: YourSettings
+
+Instantiate the ``Settings`` object in the ``Collection`` or ``System`` which will hold the ``Unit``.
+
+.. code-block:: python
+
+   class YourSystem(System):
+
+      YOUR_UNIT = YourUnit()
+
+      def configure():
+         YOUR_UNIT.apply_settings(YourSettings(
+            setting1: int,
+            setting2: float
+         ))
+
 .. note:: 
    ``Settings`` uses type hints to define member variables, but does not enforce type checking.
 
 State
 -----
 
-To track a mutable state for a ``Unit``, ``Collection``, or ``System``, inherit from ``State``.
+To track a mutable state for a ``Unit``, ``Collection``, or ``System``, inherit from ``State``. ``State`` uses `Python dataclasses <https://docs.python.org/3/library/dataclasses.html>`_ under the hood, so it can be treated in a similar way.
 
 .. code-block:: python
 
    class YourState(State):
       state1: int
       state2: float
+
+To use, add the ``State`` object to a ``Unit``. Member functions can then access and mutate the ``State`` as needed during function execution.
+
+.. code-block:: python
+
+   class YourUnit(Unit):
+
+      STATE: YourState
 
 .. note:: 
    ``State`` uses type hints to define member variables, but does not enforce type checking.
@@ -98,19 +128,19 @@ Facilitates a flow of ``Messages`` into or out of a ``Unit`` or ``Collection``.
 
 .. class:: OutputStream(Message)
 
-   Can be added to any ``Unit`` or ``Collection`` as a member variable. Methods in the may publish to it.
+   Can be added to any ``Unit`` or ``Collection`` as a member variable. Methods may publish to it.
 
 System
 ------
 
-A type of ``Collection`` which represents an entire ``ezmsg`` graph. ``Systems`` have no input or output streams and are runnable.
+A type of ``Collection`` which represents an entire ``ezmsg`` graph. ``Systems`` have no input or output streams and are runnable via :ref:`run-system`.
 
 Lifecycle Hooks
 ^^^^^^^^^^^^^^^
 
 .. py:method:: configure( self )
 
-   Runs when the ``System`` is instantiated. This is the best place to call ``Unit.apply_settings()`` on each member ``Unit`` of the ``Collection``.
+   Runs when the ``System`` is instantiated. This is the best place to call ``Unit.apply_settings()`` on each member ``Unit`` of the ``System``.
 
 Overridable Methods
 ^^^^^^^^^^^^^^^^^^^^
@@ -167,11 +197,12 @@ These function decorators can be added to member functions. A function can have 
    .. code-block:: python
 
       from typing import AsyncGenerator
-      OUTPUT = ez.OutputStream(ez.Message)
+
+      OUTPUT = OutputStream(ez.Message)
 
       @publisher(OUTPUT)
       async def send_message(self) -> AsyncGenerator:
-         message = ez.Message()
+         message = Message()
          yield(OUTPUT, message)
 
 .. py:method:: @main
