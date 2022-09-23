@@ -13,6 +13,8 @@ Connects ``Units`` together by defining a graph which connects ``OutputStreams``
 Lifecycle Hooks
 ^^^^^^^^^^^^^^^
 
+The following lifecycle hooks in the ``Collection`` class can be overridden:
+
 .. py:method:: configure( self )
 
    Runs when the ``Collection`` is instantiated. This is the best place to call ``Unit.apply_settings()`` on each member ``Unit`` of the ``Collection``.
@@ -31,7 +33,7 @@ Overridable Methods
 Message
 -------
 
-To define unique data types, inherit from ``Message``. Messages use `Python dataclasses <https://docs.python.org/3/library/dataclasses.html>`_ under the hood, so they can be treated in a similar way.
+To define unique data types, inherit from ``Message``.
 
 .. code-block:: python
 
@@ -45,11 +47,18 @@ To define unique data types, inherit from ``Message``. Messages use `Python data
 Network Definition
 ------------------
 
-.. py:class:: NetworkDefinition()
+.. py:class:: NetworkDefinition
 
    Wrapper on ``Iterator[Tuple[OutputStream, InputStream]]``.
 
 .. _run-system:
+
+NormalTermination
+-----------------
+
+.. py:class:: NormalTermination
+
+   A type of ``Exception`` which signals to ``ezmsg`` that the ``System`` can be shut down gracefully.
 
 run_system
 ----------
@@ -61,7 +70,7 @@ run_system
 Settings
 --------
 
-To pass parameters into a ``Unit``, ``Collection``, or ``System``, inherit from ``Settings``. ``Settings`` uses `Python dataclasses <https://docs.python.org/3/library/dataclasses.html>`_ under the hood, so it can be treated in a similar way.
+To pass parameters into a ``Unit``, ``Collection``, or ``System``, inherit from ``Settings``.
 
 .. code-block:: python
 
@@ -77,7 +86,7 @@ To use, add the ``Settings`` object to a ``Unit``.
 
       SETTINGS: YourSettings
 
-Instantiate the ``Settings`` object in the ``Collection`` or ``System`` which will hold the ``Unit``.
+Instantiate the ``Settings`` object in the ``Collection`` or ``System`` which will hold the ``Unit``. It is recommended to pass the instantiated ``Settings`` object to its ``Unit`` inside the ``configure()`` lifecycle hook.
 
 .. code-block:: python
 
@@ -97,7 +106,7 @@ Instantiate the ``Settings`` object in the ``Collection`` or ``System`` which wi
 State
 -----
 
-To track a mutable state for a ``Unit``, ``Collection``, or ``System``, inherit from ``State``. ``State`` uses `Python dataclasses <https://docs.python.org/3/library/dataclasses.html>`_ under the hood, so it can be treated in a similar way.
+To track a mutable state for a ``Unit``, ``Collection``, or ``System``, inherit from ``State``.
 
 .. code-block:: python
 
@@ -105,13 +114,17 @@ To track a mutable state for a ``Unit``, ``Collection``, or ``System``, inherit 
       state1: int
       state2: float
 
-To use, add the ``State`` object to a ``Unit``. Member functions can then access and mutate the ``State`` as needed during function execution.
+To use, add the ``State`` object to a ``Unit``. Member functions can then access and mutate the ``State`` as needed during function execution. It is recommended to initialize state values inside the ``initialize()`` lifecycle hook if defaults are not defined.
 
 .. code-block:: python
 
    class YourUnit(Unit):
 
       STATE: YourState
+
+      def initialize(self):
+         this.STATE.state1 = 0
+         this.STATE.state2 = 0.0
 
 .. note:: 
    ``State`` uses type hints to define member variables, but does not enforce type checking.
@@ -137,6 +150,8 @@ A type of ``Collection`` which represents an entire ``ezmsg`` graph. ``Systems``
 
 Lifecycle Hooks
 ^^^^^^^^^^^^^^^
+
+The following lifecycle hooks for ``System`` can be overridden:
 
 .. py:method:: configure( self )
 
@@ -165,7 +180,7 @@ The following lifecycle hooks in the ``Unit`` class can be overridden:
 
 .. py:method:: initialize( self ) 
 
-   Runs when the ``Unit`` is instantiated. All required parameters for ``State`` variables must have be given values in this lifecycle hook if they do not have defaults already defined.
+   Runs when the ``Unit`` is instantiated.
 
 .. py:method:: shutdown( self )
 

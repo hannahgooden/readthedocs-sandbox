@@ -9,13 +9,6 @@ The ``ezmsg`` library eases the creation of modular systems whose elements can b
 
 ``ezmsg`` is extremely fast and uses Python's (currently) new multiprocessing.shared_memory module to facilitate efficient message passing without C++ or any compilation/build tooling.
 
-.. Try experimenting with ``ezmsg`` immediately!
-.. <insert google colab link here>
-
-.. TODO: remove this, it's still here because the link is nice
-.. Check out the :doc:`usage` section for further information, including
-.. how to :ref:`installation` the project.
-
 Contents
 --------
 
@@ -23,3 +16,5 @@ Contents
 
    getting-started
    api
+   utils
+   extensions
