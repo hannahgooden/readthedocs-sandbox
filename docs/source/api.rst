@@ -30,8 +30,17 @@ Overridable Methods
 
    In this method, define and return a tuple which contains ``Units`` and ``Collections`` which should run in their own processes.
 
+Complete
+--------
+
+.. py:class:: Complete
+
+   A type of ``Exception`` which signals to ``ezmsg`` that the function can be shut down gracefully. If all functions in all ``Units`` raise ``Complete``, the entire ``System`` will terminate execution.
+
 Message
 -------
+
+`Soon to be deprecated.`
 
 To define unique data types, inherit from ``Message``.
 
@@ -44,7 +53,7 @@ To define unique data types, inherit from ``Message``.
 .. note:: 
    ``Message`` uses type hints to define member variables, but does not enforce type checking.
 
-Network Definition
+NetworkDefinition
 ------------------
 
 .. py:class:: NetworkDefinition
@@ -58,7 +67,7 @@ NormalTermination
 
 .. py:class:: NormalTermination
 
-   A type of ``Exception`` which signals to ``ezmsg`` that the ``System`` can be shut down gracefully.
+   A type of ``Exception`` which signals to ``ezmsg`` that the ``System`` can be shut down gracefully. 
 
 run_system
 ----------
@@ -66,6 +75,14 @@ run_system
 .. py:method:: run_system(system: System, num_buffers: int = 32, init_buf_size: int = 2**16, backend_process: BackendProcess=None)
 
    Begin execution of a ``System``.
+
+   `system` is the ``System`` that should be started.
+
+   `num_buffers` is the number of blocks of shared memory that the ``System`` will be allocated upon startup. These shared memory blocks will be used to pass messages from ``OutputStreams`` to ``InputStreams``.
+
+   `init_buf_size` is the size in bytes of each block of shared memory that the ``System`` will be allocated upon startup. These shared memory blocks will be used to pass messages from ``OutputStreams`` to ``InputStreams``.
+
+   `backend_process` is currently under development.
 
 Settings
 --------
@@ -78,7 +95,7 @@ To pass parameters into a ``Unit``, ``Collection``, or ``System``, inherit from 
       setting1: int
       setting2: float
 
-To use, add the ``Settings`` object to a ``Unit``.
+To use, declare the ``Settings`` object for a ``Unit`` as a member variable called (all-caps!) ``SETTINGS``. ``ezmsg`` will monitor the variable called ``SETTINGS`` in the background, so it is important to name it correctly.
 
 .. code-block:: python
 
@@ -114,7 +131,9 @@ To track a mutable state for a ``Unit``, ``Collection``, or ``System``, inherit 
       state1: int
       state2: float
 
-To use, add the ``State`` object to a ``Unit``. Member functions can then access and mutate the ``State`` as needed during function execution. It is recommended to initialize state values inside the ``initialize()`` lifecycle hook if defaults are not defined.
+To use, declare the ``State`` object for a ``Unit`` as a member variable called (all-caps!) ``STATE``. ``ezmsg`` will monitor the variable called ``STATE`` in the background, so it is important to name it correctly.
+
+Member functions can then access and mutate ``STATE`` as needed during function execution. It is recommended to initialize state values inside the ``initialize()`` lifecycle hook if defaults are not defined.
 
 .. code-block:: python
 
@@ -189,11 +208,11 @@ The following lifecycle hooks in the ``Unit`` class can be overridden:
 Function Decorators
 ^^^^^^^^^^^^^^^^^^^
 
-These function decorators can be added to member functions. A function can have any number and combination of decorators.
+These function decorators can be added to member functions.
 
 .. py:method:: @subscriber(InputStream)
 
-   A function will run once per message received from the ``InputStream`` it subscribes to. Example:
+   An async function will run once per message received from the ``InputStream`` it subscribes to. Example:
 
    .. code-block:: python
 
@@ -207,7 +226,7 @@ These function decorators can be added to member functions. A function can have 
 
 .. py:method:: @publisher(OutputStream)
 
-   A function will yield messages on the designated ``OutputStream``.
+   An async function will yield messages on the designated ``OutputStream``.
 
    .. code-block:: python
 
@@ -219,6 +238,8 @@ These function decorators can be added to member functions. A function can have 
       async def send_message(self) -> AsyncGenerator:
          message = Message()
          yield(OUTPUT, message)
+
+   A function can have both ``@subscriber`` and ``@publisher`` decorators.
 
 .. py:method:: @main
 
