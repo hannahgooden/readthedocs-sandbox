@@ -42,4 +42,3 @@ Clone the project, then create a virtual environment and install it there.
 Run an example
 --------------
 
-Talk through an example

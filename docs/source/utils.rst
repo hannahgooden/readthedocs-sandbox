@@ -61,7 +61,7 @@ Input/OutputStreams
 
    `Type:` ``InputStream(pathlib.Path)``
 
-   Pass a `pathlib.Path <https://docs.python.org/3/library/pathlib.html#basic-use>`_ to begin logging messages to that path. If the file path already exists, the existing file will be truncated to 0 length.
+   Pass a `pathlib.Path <https://docs.python.org/3/library/pathlib.html#basic-use>`_ to begin logging messages to that path. If the file path already exists, the existing file will be truncated to 0 length. If the file is already open, nothing will happen.
 
 .. object:: INPUT_STOP
 
@@ -99,7 +99,4 @@ Settings
 
 .. py:class:: MessageLoggerSettings(output: Optional[Path] = None)
 
-   Pass a `pathlib.Path <https://docs.python.org/3/library/pathlib.html#basic-use>`_ to a file where the messages will be logged. If the file path already exists, the existing file will be truncated to 0 length.
-
-Rate
-----
+   Pass a `pathlib.Path <https://docs.python.org/3/library/pathlib.html#basic-use>`_ for a file where the messages will be logged. If the file path already exists, the existing file will be truncated to 0 length.
